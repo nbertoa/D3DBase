@@ -4,7 +4,7 @@
 
 StringDrawer::StringDrawer(ID3D11Device1& device, ID3D11DeviceContext1& context)
 	: mSpriteBatch(&context)
-	, mSpriteFont(&device, L"content\\fonts\\Arial_14_Regular.spritefont")
+	, mSpriteFont(&device, L"..\\..\\content\\fonts\\Arial_14_Regular.spritefont")
 	, mTextPosition(0.0f, 0.0f)
 {
 }

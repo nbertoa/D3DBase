@@ -7,13 +7,13 @@
 
 #include <Camera/Camera.h>
 #include <DrawManager/DrawManager.h>
+#include <DXUtils/DXUtils.h>
 #include <Input/Keyboard.h>
 #include <Input/Mouse.h>
 #include <ShadersManager/ShadersManager.h>
 #include <ShaderResourcesManager/ShaderResourcesManager.h>
 #include <ShaderResourcesManager/GlobalResources.h>
 #include <Utils/RenderStateHelper.h>
-#include <Utils/DXUtils.h>
 
 #include "Component.h"
 
