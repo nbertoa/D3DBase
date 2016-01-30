@@ -4,6 +4,7 @@
 #include <DirectXColors.h>
 #include <vector>
 
+#include <Camera\Camera.h>
 #include <Utils/Assert.h>
 #include <Utils/RenderStateHelper.h>
 
@@ -24,6 +25,11 @@ void DrawManager::DrawAll(ID3D11Device1& device, ID3D11DeviceContext1& context, 
 	context.ClearRenderTargetView(&backBufferRTV, reinterpret_cast<const float*>(&Colors::Black));
 	context.ClearDepthStencilView(&depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	context.OMSetRenderTargets(1, &backBuffer, &depthStencilView);
+
+	const XMMATRIX view = Camera::gInstance->ViewMatrix();
+	const XMMATRIX proj = Camera::gInstance->ProjectionMatrix();
+
+	mEntityDrawer.Draw(device, context, view, proj);
 
 	mFrameRateDrawer.Draw();
 

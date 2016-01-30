@@ -5,10 +5,12 @@
     <ClInclude Include="Hash.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="RenderStateHelper.h" />
+    <ClInclude Include="MathUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="RenderStateHelper.cpp" />
+    <ClCompile Include="MathUtils.cpp" />
   </ItemGroup>
 </Project>

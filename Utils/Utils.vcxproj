@@ -141,11 +141,13 @@
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="MathUtils.h" />
     <ClInclude Include="RenderStateHelper.h" />
     <ClInclude Include="StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Hash.cpp" />
+    <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="RenderStateHelper.cpp" />
     <ClCompile Include="StringUtils.cpp" />
   </ItemGroup>

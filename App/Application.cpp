@@ -49,7 +49,7 @@ namespace {
 		windowClass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 		windowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 		windowClass.hbrBackground = GetSysColorBrush(COLOR_BTNFACE);
-		windowClass.lpszClassName = L"BRE";
+		windowClass.lpszClassName = L"App";
 
 		RECT windowRectangle = { 0, 0, static_cast<LONG>(screenWidth), static_cast<LONG>(screenHeight) };
 		AdjustWindowRect(&windowRectangle, WS_POPUP, FALSE);
@@ -58,7 +58,7 @@ namespace {
 		const POINT center = CenterWindow(screenWidth, screenHeight);
 		const unsigned int windowWidth = windowRectangle.right - windowRectangle.left;
 		const unsigned int windowHeight = windowRectangle.bottom - windowRectangle.top;
-		windowHandle = CreateWindow(L"BRE", L"BRE", WS_POPUP, center.x, center.y, windowWidth, windowHeight, nullptr, nullptr, instance, nullptr);
+		windowHandle = CreateWindow(L"App", L"App", WS_POPUP, center.x, center.y, windowWidth, windowHeight, nullptr, nullptr, instance, nullptr);
 
 		ShowWindow(windowHandle, showCommand);
 		UpdateWindow(windowHandle);
@@ -163,11 +163,11 @@ Application::Application(const HINSTANCE& instance, const int showCommand) {
 	camData.mPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	camData.mRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	camData.mFieldOfView = 1.0471975512f;
-	camData.mNearPlaneDistance = 5.0;
-	camData.mFarPlaneDistance = 100000;
-	camData.mMouseSensitivity = 100.0f;
-	camData.mRotationRate = 0.005f;
-	camData.mMovementRate = 300.0f;
+	camData.mNearPlaneDistance = 0.1f;
+	camData.mFarPlaneDistance = 100000.0f;
+	camData.mMouseSensitivity = 10.0f;
+	camData.mRotationRate = 0.1f;
+	camData.mMovementRate = 30.0f;
 	camData.mAspectRatio = static_cast<float> (mScreenWidth) / mScreenHeight;
 	Camera::gInstance = new Camera(camData);
 }

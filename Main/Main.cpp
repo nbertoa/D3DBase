@@ -2,6 +2,7 @@
 #include <windows.h>
 
 #include <App/Application.h>
+#include <Scene1\Scene.h>
 
 #if defined(DEBUG) || defined(_DEBUG)                                                                                                                                                            
 #define _CRTDBG_MAP_ALLOC          
@@ -11,6 +12,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 	Application app(hInstance, nCmdShow);
+	app.Add(new Scene());
 	app.Run();
 	return 0;
 }
