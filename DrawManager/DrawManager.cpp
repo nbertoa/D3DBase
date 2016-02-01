@@ -17,6 +17,13 @@ DrawManager::DrawManager(ID3D11Device1& device, ID3D11DeviceContext1& context, c
 {
 }
 
+DrawManager::~DrawManager() {
+	for (IDrawer* drawer : mDrawers) {
+		ASSERT(drawer);
+		delete drawer;
+	}
+}
+
 void DrawManager::DrawAll(ID3D11Device1& device, ID3D11DeviceContext1& context, IDXGISwapChain1& swapChain, ID3D11RenderTargetView& backBufferRTV, ID3D11DepthStencilView& depthStencilView, ID3D11ShaderResourceView& depthStencilSRV) {
 	RenderStateHelper::gInstance->SaveAll();
 
@@ -29,7 +36,10 @@ void DrawManager::DrawAll(ID3D11Device1& device, ID3D11DeviceContext1& context, 
 	const XMMATRIX view = Camera::gInstance->ViewMatrix();
 	const XMMATRIX proj = Camera::gInstance->ProjectionMatrix();
 
-	mEntityDrawer.Draw(device, context, view, proj);
+	for (IDrawer* drawer : mDrawers) {
+		ASSERT(drawer);
+		drawer->Draw(device, context, view, proj);
+	}
 
 	mFrameRateDrawer.Draw();
 

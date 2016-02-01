@@ -2,6 +2,7 @@
 #include <windows.h>
 
 #include <App/Application.h>
+#include <InstancingvsGeomShadervsVertexShader\Scene.h>
 #include <Scene1\Scene.h>
 
 #if defined(DEBUG) || defined(_DEBUG)                                                                                                                                                            
@@ -12,7 +13,7 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 	Application app(hInstance, nCmdShow);
-	app.Add(new Scene());
+	app.Add(new InstancingVsGeometryShaderVsVertexShader::Scene());
 	app.Run();
 	return 0;
 }

@@ -3,8 +3,9 @@
 #include <DirectXMath.h>
 #include <vector>
 
-#include <EntityDrawer/EntityDrawer.h>
 #include <StringDrawer/StringDrawer.h>
+
+#include "IDrawer.h"
 
 struct ID3D11DepthStencilView;
 struct ID3D11Device1;
@@ -17,13 +18,15 @@ public:
 	static DrawManager* gInstance;
 
 	DrawManager(ID3D11Device1& device, ID3D11DeviceContext1& context, const unsigned int screenWidth, const unsigned int screenHeight);
+	~DrawManager();
 	
 	void DrawAll(ID3D11Device1& device, ID3D11DeviceContext1& context, IDXGISwapChain1& swapChain, ID3D11RenderTargetView& backBufferRTV, ID3D11DepthStencilView& depthStencilView, ID3D11ShaderResourceView& depthStencilSRV);
 
-	EntityDrawer& GetEntityDrawer() { return mEntityDrawer; }
+	void AddDrawer(IDrawer& drawer) { mDrawers.emplace_back(&drawer); }
+
 	StringDrawer& FrameRateDrawer() { return mFrameRateDrawer; }
 
 private:
-	EntityDrawer mEntityDrawer;
+	std::vector<IDrawer*> mDrawers;
 	StringDrawer mFrameRateDrawer;
 };

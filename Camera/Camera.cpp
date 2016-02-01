@@ -57,10 +57,13 @@ void Camera::Update(const float elapsedTime) {
 
 	// Update position
 	const float movementMultiplier = (1.0f + Keyboard::gInstance->IsKeyDown(DIK_LSHIFT) * 5.0f) * mMovementRate * elapsedTime;
-	const XMFLOAT2 movementAmount = DirectX::XMFLOAT2(movementMultiplier * (Keyboard::gInstance->IsKeyDown(DIK_W) - Keyboard::gInstance->IsKeyDown(DIK_S)), movementMultiplier * (Keyboard::gInstance->IsKeyDown(DIK_D) - Keyboard::gInstance->IsKeyDown(DIK_A)));
+	const XMFLOAT3 movementAmount = DirectX::XMFLOAT3(movementMultiplier * (Keyboard::gInstance->IsKeyDown(DIK_W) - Keyboard::gInstance->IsKeyDown(DIK_S)), 
+													  movementMultiplier * (Keyboard::gInstance->IsKeyDown(DIK_D) - Keyboard::gInstance->IsKeyDown(DIK_A)),
+													  movementMultiplier * (Keyboard::gInstance->IsKeyDown(DIK_Q) - Keyboard::gInstance->IsKeyDown(DIK_E)));
 	XMVECTOR position = XMLoadFloat3(&mPosition);
-	position += XMLoadFloat3(&mRight) * movementAmount.y;
 	position += XMLoadFloat3(&mDirection) * movementAmount.x;
+	position += XMLoadFloat3(&mRight) * movementAmount.y;	
+	position += XMLoadFloat3(&mUp) * movementAmount.z;
 	XMStoreFloat3(&mPosition, position);
 
 	UpdateViewMatrix();

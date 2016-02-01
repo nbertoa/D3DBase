@@ -1,7 +1,7 @@
 #define QUAD_VERTICES (4)
 
 struct GSInput {
-	float3 PosVS : POSITION;
+	float4 PosVS : POSITION;
 };
 
 cbuffer cbPerFrame : register (b0) {
@@ -20,22 +20,20 @@ main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStr
 	// Compute vertices positions and texture coordinates based on
 	// a quad whose center position is mQuadCenterPosV
 	GSOutput output;
-	
-	const float4 posVS = float4(input[0].PosVS, 1.0f);
 
-	output.PosH = mul(posVS + float4(-QuadHalfSize, QuadHalfSize, 0.0f, 0.0f), Projection);
+	output.PosH = mul(input[0].PosVS + float4(-QuadHalfSize, QuadHalfSize, 0.0f, 0.0f), Projection);
 	output.TexCoord = float2(0.0f, 1.0f);
 	triangleStream.Append(output);
 
-	output.PosH = mul(posVS + float4(QuadHalfSize, QuadHalfSize, 0.0f, 0.0f), Projection);
+	output.PosH = mul(input[0].PosVS + float4(QuadHalfSize, QuadHalfSize, 0.0f, 0.0f), Projection);
 	output.TexCoord = float2(1.0f, 1.0f);
 	triangleStream.Append(output);
 
-	output.PosH = mul(posVS + float4(-QuadHalfSize, -QuadHalfSize, 0.0f, 0.0f), Projection);
+	output.PosH = mul(input[0].PosVS + float4(-QuadHalfSize, -QuadHalfSize, 0.0f, 0.0f), Projection);
 	output.TexCoord = float2(0.0f, 0.0f);
 	triangleStream.Append(output);
 
-	output.PosH = mul(posVS + float4(QuadHalfSize, -QuadHalfSize, 0.0f, 0.0f), Projection);
+	output.PosH = mul(input[0].PosVS + float4(QuadHalfSize, -QuadHalfSize, 0.0f, 0.0f), Projection);
 	output.TexCoord = float2(1.0f, 0.0f);
 	triangleStream.Append(output);
 

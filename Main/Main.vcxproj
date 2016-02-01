@@ -84,12 +84,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\external\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\external\DirectXTK\Inc;$(SolutionDir)external\tbb44_20151115oss\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;DirectXTK.lib;App.lib;Camera.lib;Clock.lib;DrawManager.lib;DXUtils.lib;EntityDrawer.lib;Input.lib;ShaderResourcesManager.lib;ShadersManager.lib;Scene1.lib;StringDrawer.lib;Utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)external\tbb44_20151115oss\lib\intel64\vc14\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CubeGenerator.lib;d3d11.lib;dinput8.lib;dxguid.lib;DirectXTK.lib;App.lib;Camera.lib;Clock.lib;DrawManager.lib;DXUtils.lib;EntityDrawer.lib;Input.lib;InstancingvsGeomShadervsVertexShader.lib;InstancingTriangleDrawer.lib;ShaderResourcesManager.lib;ShadersManager.lib;Scene1.lib;StringDrawer.lib;TriangleDrawer.lib;Utils.lib;tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -119,14 +119,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\external\DirectXTK\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\external\DirectXTK\Inc;$(SolutionDir)external\tbb44_20151115oss\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;DirectXTK.lib;App.lib;Camera.lib;Clock.lib;DrawManager.lib;DXUtils.lib;EntityDrawer.lib;Input.lib;ShaderResourcesManager.lib;ShadersManager.lib;Scene1.lib;StringDrawer.lib;Utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)external\tbb44_20151115oss\lib\intel64\vc14\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>CubeGenerator.lib;d3d11.lib;dinput8.lib;dxguid.lib;DirectXTK.lib;App.lib;Camera.lib;Clock.lib;DrawManager.lib;DXUtils.lib;EntityDrawer.lib;Input.lib;InstancingvsGeomShadervsVertexShader.lib;InstancingTriangleDrawer.lib;ShaderResourcesManager.lib;ShadersManager.lib;Scene1.lib;StringDrawer.lib;TriangleDrawer.lib;Utils.lib;tbb.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>

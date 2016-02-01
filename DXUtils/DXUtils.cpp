@@ -23,27 +23,26 @@ namespace Utils {
 		ASSERT_HR(DirectX::SaveDDSTextureToFile(&device, texture, destFilename));
 	}
 
-	void CreateInitializedBuffer(const char* id, const void* data, const unsigned int dataSize, const D3D11_USAGE usage, const unsigned int bindFlags, ID3D11Buffer* *buffer) {
+	void CreateInitializedBuffer(const char* id, const void* data, const unsigned int dataSize, const D3D11_USAGE usage, const unsigned int bindFlags, const unsigned int cpuAccessFlags, ID3D11Buffer* *buffer) {
 		ASSERT(data);
 		ASSERT(dataSize > 0);
-		D3D11_BUFFER_DESC bufferDesc;
-		ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
+		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = dataSize;
 		bufferDesc.Usage = usage;
 		bufferDesc.BindFlags = bindFlags;
-		D3D11_SUBRESOURCE_DATA subResourceData;
-		ZeroMemory(&subResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+		bufferDesc.CPUAccessFlags = cpuAccessFlags;
+		D3D11_SUBRESOURCE_DATA subResourceData = {};
 		subResourceData.pSysMem = data;
 		ShaderResourcesManager::gInstance->AddBuffer(id, bufferDesc, &subResourceData, buffer);
 	}
 
-	void CreateNonInitializedBuffer(const char* id, const unsigned int dataSize, const D3D11_USAGE usage, const unsigned int bindFlags, ID3D11Buffer* *buffer) {
+	void CreateNonInitializedBuffer(const char* id, const unsigned int dataSize, const D3D11_USAGE usage, const unsigned int bindFlags, const unsigned int cpuAccessFlags, ID3D11Buffer* *buffer) {
 		ASSERT(dataSize > 0);
-		D3D11_BUFFER_DESC bufferDesc;
-		ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
+		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = dataSize;
 		bufferDesc.Usage = usage;
 		bufferDesc.BindFlags = bindFlags;
+		bufferDesc.CPUAccessFlags = cpuAccessFlags;
 		ShaderResourcesManager::gInstance->AddBuffer(id, bufferDesc, nullptr, buffer);
 	}
 
@@ -66,8 +65,7 @@ namespace Utils {
 	}
 
 	void CreateSwapChain(ID3D11Device1& device, const unsigned int screenWidth, const unsigned int screenHeight, const unsigned int sampleCount, const unsigned int qualityLevels, const unsigned int frameRate, const HWND windowHandle, IDXGISwapChain1* &swapChain) {
-		DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
-		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 		swapChainDesc.Width = screenWidth;
 		swapChainDesc.Height = screenHeight;
 		swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -87,8 +85,7 @@ namespace Utils {
 		IDXGIFactory2* dxgiFactory = nullptr;
 		ASSERT_HR(dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory)));
 
-		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc;
-		ZeroMemory(&fullScreenDesc, sizeof(fullScreenDesc));
+		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullScreenDesc = {};
 		fullScreenDesc.RefreshRate.Numerator = frameRate;
 		fullScreenDesc.RefreshRate.Denominator = 1;
 		fullScreenDesc.Windowed = true;

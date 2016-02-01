@@ -1,5 +1,5 @@
 struct Input {
-	float4 PosOS : POSITION;
+	float3 PosOS : POSITION;
 };
 
 struct Output {
@@ -12,6 +12,6 @@ cbuffer CBufferPerFrame : register (b0) {
 
 Output main(const Input input) {
 	Output output = (Output)0;
-	output.PosVS = mul(input.PosOS, WorldView);
+	output.PosVS = mul(float4(input.PosOS, 1.0f), WorldView);
 	return output;
 }

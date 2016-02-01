@@ -64,4 +64,12 @@ GlobalResources::GlobalResources() {
 	desc.MaxLOD = 0.0f;
 	ShaderResourcesManager::gInstance->AddSamplerState("D3D11_FILTER_MIN_MAG_MIP_POINT_sampler_state", desc, &mMinMagMipPointSS);
 	ASSERT(mMinMagMipPointSS);
+
+	// No cull rasterizer state
+	D3D11_RASTERIZER_DESC rasterDesc = {};
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.DepthClipEnable = true;
+	ShaderResourcesManager::gInstance->AddRasterizerState("no_cull_rasterizer_state", rasterDesc, &mNoCullRS);
 }

@@ -214,3 +214,7 @@ ModelManifest.xml
 /DXUtils/*.filters
 /EntityDrawer/*.filters
 /Scene1/*.filters
+/content/shaders/CubeGenerator/*.cso
+/content/shaders/EntityDrawer/*.cso
+/content/shaders/InstancingTriangleDrawer/*.cso
+/content/shaders/TriangleDrawer/*.cso

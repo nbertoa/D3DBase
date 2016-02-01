@@ -40,7 +40,7 @@ namespace {
 
 	typedef LRESULT(*WindowFun)(const HWND windowHandle, const unsigned int message, const WPARAM wParam, const LPARAM lParam);
 	void InitWindow(const HINSTANCE& instance, const int showCommand, const unsigned screenWidth, const unsigned screenHeight, WNDCLASSEX& windowClass, HWND& windowHandle, WindowFun windowFun) {
-		ZeroMemory(&windowClass, sizeof(windowClass));
+		windowClass = {};
 		windowClass.cbSize = sizeof(WNDCLASSEX);
 		windowClass.style = CS_CLASSDC;
 		windowClass.lpfnWndProc = windowFun;
@@ -90,8 +90,7 @@ namespace {
 			ASSERT_HR(device->CreateRenderTargetView(backBuffer, nullptr, &backBufferRTV));
 			backBuffer->Release();
 
-			D3D11_TEXTURE2D_DESC depthStencilDesc;
-			ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+			D3D11_TEXTURE2D_DESC depthStencilDesc = {};
 			depthStencilDesc.Width = screenWidth;
 			depthStencilDesc.Height = screenHeight;
 			depthStencilDesc.MipLevels = 1;
@@ -106,16 +105,14 @@ namespace {
 			ShaderResourcesManager::gInstance->AddTexture2D("depth_stencil_texture", depthStencilDesc, nullptr, &depthStencilBuffer);
 			ASSERT(depthStencilBuffer);
 
-			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-			ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
 			depthStencilViewDesc.Flags = 0;
 			depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
 			depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			ShaderResourcesManager::gInstance->AddDepthStencilView("depth_stencil_view", *depthStencilBuffer, &depthStencilViewDesc, &depthStencilView);
 			ASSERT(depthStencilView);
 
-			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-			ZeroMemory(&shaderResourceViewDesc, sizeof(shaderResourceViewDesc));
+			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc = {};
 			shaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
 			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 			shaderResourceViewDesc.Texture2D.MipLevels = 1;
@@ -125,8 +122,7 @@ namespace {
 
 		// Set viewport
 		{
-			D3D11_VIEWPORT viewport;
-			ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+			D3D11_VIEWPORT viewport = {};
 			viewport.TopLeftX = 0.0f;
 			viewport.TopLeftY = 0.0f;
 			viewport.Width = static_cast<float>(screenWidth);
@@ -166,7 +162,7 @@ Application::Application(const HINSTANCE& instance, const int showCommand) {
 	camData.mNearPlaneDistance = 0.1f;
 	camData.mFarPlaneDistance = 100000.0f;
 	camData.mMouseSensitivity = 10.0f;
-	camData.mRotationRate = 0.1f;
+	camData.mRotationRate = 1.0f;
 	camData.mMovementRate = 30.0f;
 	camData.mAspectRatio = static_cast<float> (mScreenWidth) / mScreenHeight;
 	Camera::gInstance = new Camera(camData);
@@ -189,8 +185,7 @@ Application::~Application() {
 }
 
 void Application::Run() {
-	MSG message;
-	ZeroMemory(&message, sizeof(message));
+	MSG message = {};
 	mClock.Reset();
 	while (message.message != WM_QUIT) {
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE)) {
@@ -214,7 +209,7 @@ void Application::Update() {
 	Camera::gInstance->Update(elapsedTime);
 	for (Component* component : mComponents) {
 		ASSERT(component);
-		component->Update(elapsedTime);
+		component->Update(*mDevice, elapsedTime);
 	}
 	std::wostringstream frameRate;
 	frameRate << mClock.FrameRate();
