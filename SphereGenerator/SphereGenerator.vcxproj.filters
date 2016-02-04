@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Drawer.cpp" />
+    <ClCompile Include="GeometryShaderData.cpp" />
+    <ClCompile Include="PixelShaderData.cpp" />
+    <ClCompile Include="VertexShaderData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Drawer.h" />
+    <ClInclude Include="GeometryShaderData.h" />
+    <ClInclude Include="PixelShaderData.h" />
+    <ClInclude Include="VertexShaderData.h" />
+    <ClInclude Include="VertexType.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="GeometryShader.hlsl" />
+    <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="VertexShader.hlsl" />
+  </ItemGroup>
+</Project>

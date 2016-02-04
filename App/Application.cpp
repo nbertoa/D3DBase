@@ -156,7 +156,7 @@ Application::Application(const HINSTANCE& instance, const int showCommand) {
 
 	// Init camera
 	Camera::InputData camData;
-	camData.mPos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	camData.mPos = XMFLOAT3(0.0f, 0.0f, -100.0f);
 	camData.mRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	camData.mFieldOfView = 1.0471975512f;
 	camData.mNearPlaneDistance = 0.1f;
@@ -200,6 +200,9 @@ void Application::Run() {
 }
 
 void Application::Update() {
+	static unsigned int numCalls = 1;
+	static unsigned int fps = 0;
+	
 	const float elapsedTime = mClock.ElapsedTime();
 	if (Keyboard::gInstance->WasKeyPressedThisFrame(DIK_ESCAPE)) {
 		PostQuitMessage(0);
@@ -215,4 +218,8 @@ void Application::Update() {
 	frameRate << mClock.FrameRate();
 	DrawManager::gInstance->FrameRateDrawer().Text() = frameRate.str();
 	DrawManager::gInstance->DrawAll(*mDevice, *mContext, *mSwapChain, *mBackBufferRTV, *mDepthStencilView, *mDepthStencilSRV);
+
+	fps += mClock.FrameRate();
+	unsigned int sarasa = fps / numCalls;
+	++numCalls;
 }

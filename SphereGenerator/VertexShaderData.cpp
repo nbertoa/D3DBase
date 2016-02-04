@@ -11,27 +11,18 @@
 using namespace DirectX;
 
 namespace {
-	const char* shader = "..\\..\\content\\shaders\\InstancingTriangleDrawer\\VertexShader.cso";
+	const char* shader = "..\\..\\content\\shaders\\SphereGenerator\\VertexShader.cso";
 }
 
-namespace InstancingTriangleDrawer {
-	VertexShaderData::VertexShaderData()
-		: mInputLayout(nullptr)
-		, mShader(nullptr)
-		, mVertexBuffer(nullptr)
-		, mIndexBuffer(nullptr)
-		, mInstanceBuffer(nullptr)
-		, mIndicesCount(0)
-		, mInstancesCount(0)
-	{
+namespace SphereGenerator {
+	VertexShaderData::VertexShaderData() {
 		InitializeShader();
 		InitializeCBuffers();
 	}
 
 	void VertexShaderData::InitializeShader() {
 		D3D11_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "DIRECTION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		const unsigned int numElems = ARRAYSIZE(inputElementDescriptions);
@@ -52,7 +43,7 @@ namespace InstancingTriangleDrawer {
 		bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 		std::stringstream str;
-		str << "TriangleDrawer_VertexShaderData";
+		str << "CubeGenerator_VertexShaderData";
 		str << rand() << rand();
 		mCBuffer.InitializeBuffer(str.str().c_str(), bufferDesc);
 	}
@@ -61,10 +52,7 @@ namespace InstancingTriangleDrawer {
 		ASSERT(mInputLayout);
 		ASSERT(mShader);
 		ASSERT(mVertexBuffer);
-		ASSERT(mIndexBuffer);
-		ASSERT(mInstanceBuffer);
-		ASSERT(mIndicesCount > 0);
-		ASSERT(mInstancesCount > 0);
+		ASSERT(mVertexCount > 0);
 
 		context.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -72,12 +60,9 @@ namespace InstancingTriangleDrawer {
 
 		context.VSSetShader(mShader, nullptr, 0);
 
-		const unsigned int stride[] = { sizeof(VertexData), sizeof(XMFLOAT3) };
-		const unsigned int offset[] = { 0, 0 };
-		ID3D11Buffer* buffers[] = { mVertexBuffer, mInstanceBuffer };
-		context.IASetVertexBuffers(0, 2, buffers, stride, offset);
-
-		context.IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		const unsigned int stride = sizeof(VertexData);
+		const unsigned int offset = 0;
+		context.IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 
 		// Set constant buffers
 		ID3D11Buffer* const cBuffers[] = { mCBuffer.mBuffer };
@@ -89,23 +74,18 @@ namespace InstancingTriangleDrawer {
 		ASSERT(mInputLayout);
 		ASSERT(mShader);
 		ASSERT(mVertexBuffer);
-		ASSERT(mIndexBuffer);
-		ASSERT(mInstanceBuffer);
-		ASSERT(mIndicesCount > 0);
-		ASSERT(mInstancesCount > 0);
-		context.DrawIndexedInstanced(mIndicesCount, mInstancesCount, 0, 0, 0);
+		ASSERT(mVertexCount > 0);
+		context.Draw(mVertexCount, 0);
 	}
 
 	void VertexShaderData::PostDraw(ID3D11DeviceContext1& context) {
 		context.IASetInputLayout(nullptr);
 		context.VSSetShader(nullptr, nullptr, 0);
 
-		ID3D11Buffer* vertexBuffers[] = { nullptr, nullptr };
-		const unsigned int stride[] = { 0, 0 };
-		const unsigned int offset[] = { 0, 0 };
-		context.IASetVertexBuffers(0, 2, vertexBuffers, stride, offset);
-
-		context.IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+		ID3D11Buffer* vertexBuffers[] = { nullptr };
+		const unsigned int stride[] = { 0 };
+		const unsigned int offset[] = { 0 };
+		context.IASetVertexBuffers(0, 1, vertexBuffers, stride, offset);
 
 		ID3D11Buffer* const cBuffers[] = { nullptr };
 		context.VSSetConstantBuffers(0, ARRAYSIZE(cBuffers), cBuffers);

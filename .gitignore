@@ -218,3 +218,4 @@ ModelManifest.xml
 /content/shaders/EntityDrawer/*.cso
 /content/shaders/InstancingTriangleDrawer/*.cso
 /content/shaders/TriangleDrawer/*.cso
+/content/shaders/SphereGenerator/*.cso
