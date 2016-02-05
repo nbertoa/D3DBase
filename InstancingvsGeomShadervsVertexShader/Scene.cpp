@@ -21,7 +21,7 @@
 using namespace DirectX;
 
 namespace {
-	const size_t NUM_ENTITIES = 1000;
+	const size_t NUM_ENTITIES = 10000;
 	const float POSITION_OFFSET = 50.0f;
 
 	const float QUAD_HALF_SIZE = 0.125f;
@@ -29,10 +29,10 @@ namespace {
 	const size_t CUBE_INDICES = 36;
 
 	const float SPHERE_RADIUS = 4.0f;
-	const unsigned int SPHERE_SLICE_COUNT = 5;
-	const unsigned int SPHERE_STACK_COUNT = 5;
+	const unsigned int SPHERE_SLICE_COUNT = 6;
+	const unsigned int SPHERE_STACK_COUNT = 7;
 
-	CubeGenerator::Drawer* generateCubeGeneratorDrawerFor() {
+	CubeGenerator::Drawer* generateCubeGeneratorDrawer() {
 		CubeGenerator::Drawer* drawer = new CubeGenerator::Drawer;
 		XMStoreFloat4x4(&drawer->World(), XMMatrixIdentity());
 
@@ -266,7 +266,9 @@ namespace {
 
 		// Generate spheres geometry
 		std::vector<XMFLOAT3> positions;
+		positions.reserve(NUM_ENTITIES * (SPHERE_STACK_COUNT - 1) * (SPHERE_SLICE_COUNT + 1) + 2);
 		std::vector<unsigned int> indices;
+		indices.reserve(NUM_ENTITIES * (6 * SPHERE_SLICE_COUNT + 6 * (SPHERE_SLICE_COUNT + 1 * SPHERE_STACK_COUNT - 2)));
 		for (size_t i = 0; i < NUM_ENTITIES; ++i) {
 			const XMFLOAT3 centerPos(Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET), 
 									 Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET),

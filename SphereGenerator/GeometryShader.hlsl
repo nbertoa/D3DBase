@@ -1,7 +1,7 @@
 #define SPHERE_RADIUS 4.0f
-#define SPHERE_SLICE_COUNT 5
-#define SPHERE_STACK_COUNT 5
-#define NUM_SPHERE_VERTICES (SPHERE_SLICE_COUNT + 1) * 6 + ((SPHERE_STACK_COUNT - 2) * (SPHERE_SLICE_COUNT + 1)) * 6
+#define SPHERE_SLICE_COUNT 6
+#define SPHERE_STACK_COUNT 7
+#define NUM_SPHERE_VERTICES (SPHERE_SLICE_COUNT * 6 + ((SPHERE_STACK_COUNT - 2) * (SPHERE_SLICE_COUNT + 1)) * 6)
 #define PI 3.14159265359
 
 struct GSInput {
@@ -21,7 +21,7 @@ struct GSOutput {
 void
 main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStream) {
 	const uint positionsSize = 2 + (SPHERE_STACK_COUNT - 1) * (SPHERE_SLICE_COUNT + 1);
-	float4 positions[positionsSize];
+	float4 positions[positionsSize] = { float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f), float4(0.0f, 0.0f, 0.0f, 0.0f) };
 	
 	//
 	// Compute the vertices stating at the top pole and moving down the stacks.
@@ -63,18 +63,8 @@ main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStr
 	// Generate sphere triangles
 	GSOutput output;
 
-	//
-	// Compute indices for top & bottom stacsk.
-	//
-
-	// South pole vertex was added last.
-	const uint southPoleIndex = positionsSize - 1;
-
-	// Offset the indices to the index of the first vertex in the last ring.
-	const uint ringVertexCount = SPHERE_SLICE_COUNT + 1;
-	uint offset = southPoleIndex - ringVertexCount;
-
-	for (uint k = 0; k <= SPHERE_SLICE_COUNT; ++k) {
+	// Generate triangles for top stack.
+	for (uint k = 1; k <= SPHERE_SLICE_COUNT; ++k) {
 		output.PosH = positions[0];
 		triangleStream.Append(output);
 
@@ -85,26 +75,16 @@ main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStr
 		triangleStream.Append(output);
 
 		triangleStream.RestartStrip();
-
-		output.PosH = positions[southPoleIndex];
-		triangleStream.Append(output);
-
-		output.PosH = positions[offset + k];
-		triangleStream.Append(output);
-
-		output.PosH = positions[offset + k + 1];
-		triangleStream.Append(output);
-
-		triangleStream.RestartStrip();
 	}
 
 	//
-	// Compute indices for inner stacks (not connected to poles).
+	// Generate triangles for inner stacks (not connected to poles).
 	//
 
 	// Offset the indices to the index of the first vertex in the first ring.
 	// This is just skipping the top pole vertex.
 	uint baseIndex = 1;
+	const uint ringVertexCount = SPHERE_SLICE_COUNT + 1;
 	for (uint n = 0; n < SPHERE_STACK_COUNT - 2; ++n) {
 		for (uint m = 0; m <= SPHERE_SLICE_COUNT; ++m) {
 			output.PosH = positions[n * ringVertexCount + m];
@@ -129,5 +109,27 @@ main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStr
 
 			triangleStream.RestartStrip();
 		}
+	}
+
+	//
+	// Generate triangles for bottom stack
+	//
+
+	// South pole vertex was added last.
+	const uint southPoleIndex = positionsSize - 1;
+
+	// Offset the indices to the index of the first vertex in the last ring.
+	uint offset = southPoleIndex - ringVertexCount;
+	for (uint l = 0; l < SPHERE_SLICE_COUNT; ++l) {
+		output.PosH = positions[southPoleIndex];
+		triangleStream.Append(output);
+
+		output.PosH = positions[offset + l];
+		triangleStream.Append(output);
+
+		output.PosH = positions[offset + l + 1];
+		triangleStream.Append(output);
+
+		triangleStream.RestartStrip();
 	}
 }

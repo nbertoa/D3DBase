@@ -12,8 +12,8 @@ namespace GeometryGenerator {
 
 		const unsigned int indexOffset = static_cast<unsigned int> (positions.size());
 
-		positions.reserve(positions.size() + stackCount * sliceCount);
-		indices.reserve(indices.size() + 6 * sliceCount + 6 * (sliceCount + stackCount - 2 ));
+		//positions.reserve(positions.size() + (stackCount - 1) * (sliceCount + 1) + 2);
+		//indices.reserve(indices.size() + 6 * sliceCount + 6 * (sliceCount + 1 * stackCount - 2));
 
 		//
 		// Compute the vertices stating at the top pole and moving down the stacks.
