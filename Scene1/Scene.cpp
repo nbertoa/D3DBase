@@ -18,78 +18,102 @@
 using namespace DirectX;
 
 namespace {
-	const size_t NUM_ENTITIES = 10000000;
+	const size_t NUM_ENTITIES = 1000000;
 	const float QUAD_HALF_SIZE = 0.125f;
 	const float POSITION_OFFSET = 50.0f;
 	const float VELOCITY_OFFSET = 1.0f;
 	const char* TEXTURE_PATH = "..\\..\\content\\textures\\flare.dds";
 
-	struct Positions {
-		std::vector<XMFLOAT3>* mPositions;
-		std::vector<XMFLOAT3>* mVelocity;
+	struct EntitiesUpdater {
+		EntitiesUpdater()
+			: mPositions(new XMFLOAT3[NUM_ENTITIES])
+			, mVelocities(new XMFLOAT3[NUM_ENTITIES])
+			, mElapsedTime(0.0f)
+		{
 
+		}
+
+		XMFLOAT3* mPositions;
+		XMFLOAT3* mVelocities;
+		float mElapsedTime;
+
+		void updatePosition(const size_t index) const {
+			mPositions[index].x += mVelocities[index].x * mElapsedTime;
+			mPositions[index].y += mVelocities[index].y * mElapsedTime;
+			mPositions[index].z += mVelocities[index].z * mElapsedTime;
+			mVelocities[index].x *= (-POSITION_OFFSET < mPositions[index].x && mPositions[index].x < POSITION_OFFSET) ? 1.0f : -1.0f;
+			mVelocities[index].y *= (-POSITION_OFFSET < mPositions[index].y && mPositions[index].y < POSITION_OFFSET) ? 1.0f : -1.0f;
+			mVelocities[index].z *= (-POSITION_OFFSET < mPositions[index].z && mPositions[index].z < POSITION_OFFSET) ? 1.0f : -1.0f;
+		}
+
+		// Used by Intel TBB
 		void operator()(const tbb::blocked_range<size_t>& range) const {
 			for (size_t i = range.begin(); i < range.end(); ++i) {
-				(*mPositions)[i].x += (*mVelocity)[i].x;
-				(*mPositions)[i].y += (*mVelocity)[i].y;
-				(*mPositions)[i].z += (*mVelocity)[i].z;
-				
+				updatePosition(i);
+			}
+		}
+
+		void singleThreadUpdate() const {
+			for (size_t i = 0; i < NUM_ENTITIES; ++i) {
+				updatePosition(i);
 			}
 		}
 	};
+
+	EntitiesUpdater gUpdater;
 }
 
-Scene::Scene() {
-	// Set world matrix
-	EntityDrawer::Drawer* entityDrawer = new EntityDrawer::Drawer;
-	DrawManager::gInstance->AddDrawer(*entityDrawer);
-	XMStoreFloat4x4(&entityDrawer->World(), XMMatrixIdentity());
+namespace EntitiesScene {
+	Scene::Scene() {
+		// Set world matrix
+		EntityDrawer::Drawer* entityDrawer = new EntityDrawer::Drawer;
+		DrawManager::gInstance->AddDrawer(*entityDrawer);
+		XMStoreFloat4x4(&entityDrawer->World(), XMMatrixIdentity());
 
-	// Create texture
-	ID3D11ShaderResourceView* textureSRV;
-	ShaderResourcesManager::gInstance->AddTextureFromFileSRV(TEXTURE_PATH, &textureSRV);
-	ASSERT(textureSRV);
+		// Create texture
+		ID3D11ShaderResourceView* textureSRV;
+		ShaderResourcesManager::gInstance->AddTextureFromFileSRV(TEXTURE_PATH, &textureSRV);
+		ASSERT(textureSRV);
 
-	// Generate positions
-	mPositions.reserve(NUM_ENTITIES);
-	mVelocity.reserve(NUM_ENTITIES);
-	for (size_t i = 0; i < NUM_ENTITIES; ++i) {
-		float x = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
-		float y = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
-		float z = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
-		mPositions.push_back(XMFLOAT3(x, y, z));
+		// Generate positions
+		for (size_t i = 0; i < NUM_ENTITIES; ++i) {
+			float x = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
+			float y = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
+			float z = Utils::RandomFloat(-POSITION_OFFSET, POSITION_OFFSET);
+			gUpdater.mPositions[i] = XMFLOAT3(x, y, z);
 
-		x = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
-		y = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
-		z = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
-		mVelocity.push_back(XMFLOAT3(x, y, z));
+			x = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
+			y = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
+			z = Utils::RandomFloat(-VELOCITY_OFFSET, VELOCITY_OFFSET);
+			gUpdater.mVelocities[i] = XMFLOAT3(x, y, z);
+		}
+
+		// Create vertex buffer
+		const size_t id = Utils::Hash("vertex_buffer");
+		Utils::CreateInitializedBuffer("vertex_buffer", gUpdater.mPositions, static_cast<unsigned int> (NUM_ENTITIES * sizeof(EntityDrawer::VertexData)), D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, D3D11_CPU_ACCESS_WRITE);
+		mVertexBuffer = ShaderResourcesManager::gInstance->Buffer(id);
+		ASSERT(mVertexBuffer);
+
+		// Fill VertexShaderData
+		entityDrawer->GetVertexShaderData().VertexBuffer() = mVertexBuffer;
+		entityDrawer->GetVertexShaderData().SetVertexCount(NUM_ENTITIES);
+
+		// Fill GeometryShaderData
+		entityDrawer->GetGeometryShaderData().SetQuadHalfSize(QUAD_HALF_SIZE);
+
+		// Fill PixelShaderData
+		entityDrawer->GetPixelShaderData().SamplerState() = GlobalResources::gInstance->MinMagMipPointSampler();
+		entityDrawer->GetPixelShaderData().TextureSRV() = textureSRV;
 	}
 
-	// Create vertex buffer
-	const size_t id = Utils::Hash("vertex_buffer");
-	Utils::CreateInitializedBuffer("vertex_buffer", &mPositions[0], static_cast<unsigned int> (NUM_ENTITIES * sizeof(EntityDrawer::VertexData)), D3D11_USAGE_DYNAMIC, D3D11_BIND_VERTEX_BUFFER, D3D11_CPU_ACCESS_WRITE);
-	mVertexBuffer = ShaderResourcesManager::gInstance->Buffer(id);
-	ASSERT(mVertexBuffer);
+	void Scene::Update(ID3D11Device1& device, const float elapsedTime) {
+		ASSERT(mVertexBuffer);
+		gUpdater.mElapsedTime = elapsedTime;
 
-	// Fill VertexShaderData
-	entityDrawer->GetVertexShaderData().VertexBuffer() = mVertexBuffer;
-	entityDrawer->GetVertexShaderData().SetVertexCount(NUM_ENTITIES);
+		tbb::parallel_for(tbb::blocked_range<size_t>(0, NUM_ENTITIES), gUpdater);
+		//gUpdater.singleThreadUpdate();
 
-	// Fill GeometryShaderData
-	entityDrawer->GetGeometryShaderData().SetQuadHalfSize(QUAD_HALF_SIZE);
-
-	// Fill PixelShaderData
-	entityDrawer->GetPixelShaderData().SamplerState() = GlobalResources::gInstance->MinMagMipPointSampler();
-	entityDrawer->GetPixelShaderData().TextureSRV() = textureSRV;
+		Utils::CopyData(device, gUpdater.mPositions, NUM_ENTITIES * sizeof(XMFLOAT3), *mVertexBuffer);
+	}
 }
 
-void Scene::Update(ID3D11Device1& device, const float elapsedTime) {
-	ASSERT(mVertexBuffer);
-	Positions pos;
-	pos.mPositions = &mPositions;
-	pos.mVelocity = &mVelocity;
-
-	tbb::parallel_for(tbb::blocked_range<size_t>(0, NUM_ENTITIES), pos);
-
-	Utils::CopyData(device, &mPositions[0], mPositions.size() * sizeof(XMFLOAT3), *mVertexBuffer);
-}

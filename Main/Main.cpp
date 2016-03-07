@@ -13,7 +13,8 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
 	Application app(hInstance, nCmdShow);
-	app.Add(new InstancingVsGeometryShaderVsVertexShader::Scene());
+	app.Add(new EntitiesScene::Scene());
 	app.Run();
 	return 0;
 }
+
