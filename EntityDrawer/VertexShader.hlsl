@@ -3,7 +3,7 @@ struct Input {
 };
 
 struct Output {
-	float4 PosVS : POSITION;
+	float4 PosVS : POSITION_VIEW;
 };
 
 cbuffer CBufferPerFrame : register (b0) {

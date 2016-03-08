@@ -1,7 +1,7 @@
 #define QUAD_VERTICES (4)
 
-struct GSInput {
-	float4 PosVS : POSITION;
+struct Input {
+	float4 PosVS : POSITION_VIEW;
 };
 
 cbuffer cbPerFrame : register (b0) {
@@ -9,17 +9,17 @@ cbuffer cbPerFrame : register (b0) {
 	float QuadHalfSize;
 };
 
-struct GSOutput {
+struct Output {
 	float4 PosH : SV_POSITION;
 	float2 TexCoord : TEXCOORD;
 };
 
 [maxvertexcount(QUAD_VERTICES)]
 void
-main(const in point GSInput input[1], inout TriangleStream<GSOutput> triangleStream) {
+main(const in point Input input[1], inout TriangleStream<Output> triangleStream) {
 	// Compute vertices positions and texture coordinates based on
 	// a quad whose center position is mQuadCenterPosV
-	GSOutput output;
+	Output output;
 
 	output.PosH = mul(input[0].PosVS + float4(-QuadHalfSize, QuadHalfSize, 0.0f, 0.0f), Projection);
 	output.TexCoord = float2(0.0f, 1.0f);

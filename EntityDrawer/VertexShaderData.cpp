@@ -22,7 +22,7 @@ namespace EntityDrawer {
 
 	void VertexShaderData::InitializeShader() {
 		D3D11_INPUT_ELEMENT_DESC inputElementDescriptions[] = {
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		const unsigned int numElems = ARRAYSIZE(inputElementDescriptions);
@@ -54,7 +54,7 @@ namespace EntityDrawer {
 		ASSERT(mVertexBuffer);
 		ASSERT(mVertexCount > 0);
 
-		context.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		context.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 		context.IASetInputLayout(mInputLayout);
 
